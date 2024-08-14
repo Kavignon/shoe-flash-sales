@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Ruby
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.4'
+          bundler-cache: true
+
+      # Install dependencies
+      - name: Install dependencies
+        run: bundle install
+
+      # Generate binstubs for RuboCop, Brakeman, and bundler-audit
+      - name: Generate binstubs
+        run: bundle binstubs bundler-audit brakeman rubocop
+
+      # Run RuboCop
+      # - name: Run RuboCop
+      #   run: bin/rubocop --parallel
+
+      # Run security audits
+      - name: Security audit dependencies
+        run: bin/bundler-audit --update
+      - name: Security audit application code
+        run: bin/brakeman -q -w2
+
+      # Set up database schema
+      - name: Set up database schema
+        run: bin/rails db:schema:load
+
+      # Run Minitest or Rails tests
+      - name: Run tests
+        run: bin/rails test
+
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t kavignonkaizoku007/rails-app-template:latest .
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Push Docker image to Docker Hub
+      - name: Push Docker image
+        run: docker push kavignonkaizoku007/rails-app-template:latest
+
+      - name: Set up SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan 134.122.40.120 >> ~/.ssh/known_hosts
+
+      - name: Deploy to Server
+        run: |
+          ssh -i ~/.ssh/deploy_key user@134.122.40.120 << 'EOF'
+            docker pull ***/rails-app-template:latest
+            docker stop $(docker ps -q --filter "name=rails-app-template") || true
+            docker rm $(docker ps -a -q --filter "name=rails-app-template") || true
+            docker run -d -p 3000:3000 --name rails-app-template ***/rails-app-template:latest
+          EOF

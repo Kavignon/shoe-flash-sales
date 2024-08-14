@@ -1,0 +1,17 @@
+# .rubocop.yml
+
+# Disable specific cops for cyclomatic complexity, method length, and perceived complexity
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+  
+Layout/LineLength:
+  Enabled: false
+  
+Metrics/BlockLength:
+  Enabled: false

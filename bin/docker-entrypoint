@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+# Print a message to indicate the start of the entrypoint script
+echo "Starting entrypoint script..."
+
+echo "Running database migrations..."
+RAILS_ENV=production bin/rails db:migrate
+
+# Check if the command is 'rails server'
+if [ "${1}" == "rails" ] && [ "${2}" == "server" ]; then
+  echo "Preparing the database..."
+  
+  # Run migrations
+  echo "Running database migrations..."
+  RAILS_ENV=production bin/rails db:migrate
+
+  # Start the Rails server
+  echo "Starting Rails server..."
+  exec "$@"
+else
+  # For other commands, just execute them
+  exec "$@"
+fi
