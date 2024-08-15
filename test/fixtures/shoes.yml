@@ -1,15 +1,8 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  brand_name: MyString
-  style: MyString
-  color: MyString
-  size: 9.99
-  price: 9.99
-
-two:
-  brand_name: MyString
-  style: MyString
-  color: MyString
-  size: 9.99
-  price: 9.99
+running_shoe:
+  brand_name: "Nike"
+  style: "Running"
+  color: "Red"
+  size: 10.5
+  price: 99.99
