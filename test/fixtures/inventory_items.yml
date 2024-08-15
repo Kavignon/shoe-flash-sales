@@ -1,11 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  store: one
-  shoe: one
-  quantity: 1
-
-two:
-  store: two
-  shoe: two
-  quantity: 1
+aldos_running_shoes:
+  store: aldos_store
+  shoe: running_shoe
+  quantity: 50
