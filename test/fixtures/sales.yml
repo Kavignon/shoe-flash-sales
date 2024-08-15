@@ -1,0 +1,5 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+sale_for_running_shoes:
+  inventory_item: aldos_running_shoes
+  quantity_sold: 2

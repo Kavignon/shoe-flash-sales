@@ -9,8 +9,11 @@ module ActiveSupport
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    fixtures :all
+    # Loading fixtures in a specific order to avoid foreign key constraint issues.
+    # Rails loads the fixtures alphabetically by their filenames.
+    # For instance, the InventoryItem depends on the store so the store fixture has to be loaded first.
+    # Due to how things go with the all method, that would have lead to a wrong behavior (Foreign key violations found)
+    fixtures :stores, :shoes, :inventory_items, :sales
 
     # Add more helper methods to be used by all tests here...
   end
