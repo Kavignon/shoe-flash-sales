@@ -1,0 +1,18 @@
+<div class="container">
+  <h1 class="title"><%= @shoe.brand_name %> - <%= @shoe.style %></h1>
+  <div class="columns">
+    <div class="column is-half">
+      <p><strong>Color:</strong> <%= @shoe.color %></p>
+      <p><strong>Size:</strong> <%= @shoe.size %></p>
+      <p><strong>Price:</strong> $<%= @shoe.price %></p>
+      <p><strong>Available Quantity:</strong> <%= @inventory_item.quantity %></p>
+
+      <%= form_with url: create_order_path, method: :post, local: true do |f| %>
+        <%= hidden_field_tag :store_id, @store.id %>
+        <%= hidden_field_tag :shoe_id, @shoe.id %>
+        <%= hidden_field_tag :quantity, 1 %>
+        <%= submit_tag 'Order', class: 'button is-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>

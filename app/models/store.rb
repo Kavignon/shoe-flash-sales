@@ -6,6 +6,7 @@ class Store < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   has_many :inventory_items, dependent: :destroy
+  has_many :shoes, through: :inventory_items
   has_many :sales, through: :inventory_items, dependent: :destroy
 
   def total_inventory_value

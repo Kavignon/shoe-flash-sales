@@ -6,6 +6,12 @@ ruby '3.3.4'
 
 gem 'rails', '~> 7.2'
 
+gem 'bulma-rails'
+
+gem 'sassc-rails'
+
+gem 'rails-controller-testing'
+
 gem 'actioncable'
 
 gem 'minitest'

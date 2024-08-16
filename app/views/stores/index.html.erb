@@ -1,0 +1,13 @@
+<%= stylesheet_link_tag 'bulma', media: 'all' %>
+<div class="container">
+  <h1 class="title">Select a Store</h1>
+  <div class="columns is-multiline">
+    <% @stores.each do |store| %>
+      <div class="column is-one-quarter">
+        <a class="box" href="<%= store_path(store) %>">
+          <h2 class="subtitle"><%= store.name %></h2>
+        </a>
+      </div>
+    <% end %>
+  </div>
+</div>
