@@ -2,3 +2,6 @@
 
 aldos_store:
   name: "Aldo's Shoes"
+  
+running_room_store:
+  name: "The running room"

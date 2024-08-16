@@ -10,6 +10,8 @@ gem 'bulma-rails'
 
 gem 'sassc-rails'
 
+gem 'rails-controller-testing'
+
 gem 'actioncable'
 
 gem 'minitest'
