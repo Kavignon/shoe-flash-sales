@@ -6,14 +6,13 @@ echo "Starting entrypoint script..."
 echo "Running database migrations..."
 RAILS_ENV=production bin/rails db:migrate
 
+echo "Seeding the database"
+RAILS_ENV=production bin/rails db:seed
+
 # Check if the command is 'rails server'
 if [ "${1}" == "rails" ] && [ "${2}" == "server" ]; then
   echo "Preparing the database..."
   
-  # Run migrations
-  echo "Running database migrations..."
-  RAILS_ENV=production bin/rails db:migrate
-
   # Start the Rails server
   echo "Starting Rails server..."
   exec "$@"
