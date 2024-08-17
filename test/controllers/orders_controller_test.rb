@@ -10,7 +10,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create sale with valid order' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 5 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
@@ -22,7 +22,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should redirect with alert for invalid quantity' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
@@ -32,7 +32,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test 'should redirect with alert for insufficient stock' do
     @inventory_item.update(quantity: 3)
 
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
@@ -40,7 +40,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should redirect with alert when store is not found' do
-    post create_order_url, params: { store_id: 'nonexistent_store_id', shoe_id: @shoe.id, quantity: 5 }
+    non_existent_store_id = -1
+    post store_orders_path(store_id: non_existent_store_id), params: { shoe_id: @shoe.id, quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to stores_path
@@ -48,7 +49,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should redirect with alert when shoe is not found' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: 'nonexistent_shoe_id', quantity: 5 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: 'nonexistent_shoe_id', quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
@@ -56,7 +57,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'flash messages for invalid quantity' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
 
     assert_equal OrdersController::INVALID_QUANTITY_ALERT_MESSAGE, flash[:alert]
     assert_nil flash[:notice]
@@ -65,7 +66,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test 'flash messages for insufficient stock' do
     @inventory_item.update(quantity: 3)
 
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
 
     assert_equal OrdersController::INSUFFICIENT_STOCK_IN_INVENTORY_ALERT_MESSAGE, flash[:alert]
     assert_nil flash[:notice]

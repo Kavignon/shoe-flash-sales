@@ -47,13 +47,6 @@ class OrdersController < ApplicationController
     "Insufficient stock for Shoe ID: #{@shoe.id} at Store ID: #{@store.id}. Requested: #{quantity}, Available: #{@inventory_item.quantity}"
   end
 
-  def process_order(quantity)
-    generate_sale(quantity)
-    Rails.logger.info order_success_message(quantity)
-    flash[:notice] = SUCCESSFUL_ORDER_PLACED_ALERT_MESSAGE
-    redirect_to store_path(@store)
-  end
-
   def order_success_message(quantity)
     "Order placed successfully: Store ID: #{@store.id}, Shoe ID: #{@shoe.id}, Quantity: #{quantity}"
   end

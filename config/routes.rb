@@ -7,7 +7,6 @@ Rails.application.routes.draw do
 
   resources :stores, only: %i[index show] do
     resources :shoes, only: %i[index show]
+    resources :orders, only: [:create]
   end
-
-  post 'order', to: 'orders#create', as: 'create_order'
 end
