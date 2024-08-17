@@ -11,7 +11,7 @@ class Store < ApplicationRecord
 
   def total_inventory_value
     inventory_items.joins(:shoe).pluck('quantity', 'shoes.price').map do |quantity, price|
-      quantity * price
+      quantity.to_f * price.to_f
     end.sum
   end
 

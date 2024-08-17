@@ -37,7 +37,8 @@ class InventoryItemTest < ActiveSupport::TestCase
   end
 
   test 'high_in_stock? should return false when quantity is below threshold' do
-    assert_not @aldos_running_shoes.high_stock?
+    item = InventoryItem.new(quantity: InventoryItem::HIGH_STOCK_THRESHOLD - 1, store: stores(:aldos_store), shoe: shoes(:running_shoe))
+    assert_not item.high_stock?
   end
 
   test 'high_stock? should return true when quantity is above high stock threshold' do

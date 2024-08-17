@@ -7,7 +7,6 @@ class StoreTest < ActiveSupport::TestCase
     @store = stores(:aldos_store)
     @shoe = shoes(:running_shoe)
     @inventory_item = inventory_items(:aldos_running_shoes)
-    @sale = @inventory_item.sales.create!(quantity_sold: 5)
   end
 
   test 'should be valid' do
