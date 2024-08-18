@@ -10,70 +10,65 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create sale with valid order' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 5 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
-    assert_equal 'Order placed successfully', flash[:notice]
+    assert_equal OrdersController::SUCCESSFUL_ORDER_PLACED_ALERT_MESSAGE, flash[:notice]
+    assert_nil flash[:alert]
 
     assert Sale.exists?(inventory_item_id: @inventory_item.id, quantity_sold: 5)
     assert_equal 45, @inventory_item.reload.quantity
   end
 
   test 'should redirect with alert for invalid quantity' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
-    assert_equal 'Invalid quantity', flash[:alert]
+    assert_equal OrdersController::INVALID_QUANTITY_ALERT_MESSAGE, flash[:alert]
   end
 
   test 'should redirect with alert for insufficient stock' do
-    @inventory_item.update(quantity: 3)  # Set inventory to less than the quantity requested
+    @inventory_item.update(quantity: 3)
 
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
-    assert_equal 'Insufficient stock', flash[:alert]
+    assert_equal OrdersController::INSUFFICIENT_STOCK_IN_INVENTORY_ALERT_MESSAGE, flash[:alert]
   end
 
   test 'should redirect with alert when store is not found' do
-    post create_order_url, params: { store_id: 'nonexistent_store_id', shoe_id: @shoe.id, quantity: 5 }
+    non_existent_store_id = -1
+    post store_orders_path(store_id: non_existent_store_id), params: { shoe_id: @shoe.id, quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to stores_path
-    assert_equal 'Store not found', flash[:alert]
+    assert_equal OrdersController::STORE_NOT_FOUND_ALERT_MESSAGE, flash[:alert]
   end
 
   test 'should redirect with alert when shoe is not found' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: 'nonexistent_shoe_id', quantity: 5 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: 'nonexistent_shoe_id', quantity: 5 }
 
     assert_response :redirect
     assert_redirected_to store_path(@store)
-    assert_equal 'Shoe not found', flash[:alert]
-  end
-
-  test 'flash messages for valid order' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 5 }
-
-    assert_equal 'Order placed successfully', flash[:notice]
-    assert_nil flash[:alert]
+    assert_equal OrdersController::SHOE_NOT_FOUND_ALERT_MESSAGE, flash[:alert]
   end
 
   test 'flash messages for invalid quantity' do
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 0 }
 
-    assert_equal 'Invalid quantity', flash[:alert]
+    assert_equal OrdersController::INVALID_QUANTITY_ALERT_MESSAGE, flash[:alert]
     assert_nil flash[:notice]
   end
 
   test 'flash messages for insufficient stock' do
     @inventory_item.update(quantity: 3)
 
-    post create_order_url, params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
+    post store_orders_path(@store), params: { store_id: @store.id, shoe_id: @shoe.id, quantity: 10 }
 
-    assert_equal 'Insufficient stock', flash[:alert]
+    assert_equal OrdersController::INSUFFICIENT_STOCK_IN_INVENTORY_ALERT_MESSAGE, flash[:alert]
     assert_nil flash[:notice]
   end
 end
