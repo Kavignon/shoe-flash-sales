@@ -38,17 +38,23 @@ class OrdersController < ApplicationController
   end
 
   def handle_valid_order(quantity)
-    Rails.logger.info order_success_message(quantity)
+    success_order_msg = successful_order_notification(quantity)
+    ActionCable.server.broadcast('purchase_alerts_channel', { message: success_order_msg })
+
+    Rails.logger.info success_order_msg
     flash[:notice] = SUCCESSFUL_ORDER_PLACED_ALERT_MESSAGE
     redirect_to store_path(@store)
   end
 
-  def insufficient_stock_message(quantity)
-    "Insufficient stock for Shoe ID: #{@shoe.id} at Store ID: #{@store.id}. Requested: #{quantity}, Available: #{@inventory_item.quantity}"
+  def successful_order_notification(quantity)
+    shoe_pair_str = quantity > 1 ? 'pair'.pluralize : 'pair'
+    bought_shoe_str = "#{@shoe.brand_name}, #{@shoe.style} in #{@shoe.color} in size #{@shoe.size}"
+    invoice_total = (quantity * @shoe.price).to_f.round(2)
+    "#{quantity} #{shoe_pair_str} of #{bought_shoe_str} was purchased for a total of $#{invoice_total} at #{@store.name}"
   end
 
-  def order_success_message(quantity)
-    "Order placed successfully: Store ID: #{@store.id}, Shoe ID: #{@shoe.id}, Quantity: #{quantity}"
+  def insufficient_stock_message(quantity)
+    "Insufficient stock for Shoe ID: #{@shoe.id} at Store ID: #{@store.id}. Requested: #{quantity}, Available: #{@inventory_item.quantity}"
   end
 
   def generate_sale(quantity)
