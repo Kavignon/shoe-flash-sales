@@ -1,0 +1,17 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <% if @breadcrumbs.present? %>
+      <% @breadcrumbs.each_with_index do |breadcrumb, index| %>
+        <% if index < @breadcrumbs.size - 1 %>
+          <li>
+            <a href="<%= breadcrumb[:url] %>"><%= breadcrumb[:name] %></a>
+          </li>
+        <% else %>
+          <li class="is-active">
+            <a href="#" aria-current="page"><%= breadcrumb[:name] %></a>
+          </li>
+        <% end %>
+      <% end %>
+    <% end %>
+  </ul>
+</nav>

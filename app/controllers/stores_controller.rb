@@ -3,6 +3,7 @@
 # This controller will handle the store selection and show the shoes available in a store.
 class StoresController < ApplicationController
   before_action :set_store, only: [:show]
+  before_action :set_breadcrumbs
 
   def index
     @stores = Store.all
@@ -21,5 +22,11 @@ class StoresController < ApplicationController
       flash[:alert] = 'Store not found'
       redirect_to stores_path
     end
+  end
+
+  def set_breadcrumbs
+    @breadcrumbs = [
+      { name: 'Stores', url: root_path }
+    ]
   end
 end

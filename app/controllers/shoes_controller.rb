@@ -5,6 +5,7 @@ class ShoesController < ApplicationController
   before_action :set_store
   before_action :set_shoe
   before_action :set_inventory_item, only: [:show]
+  before_action :set_breadcrumbs
 
   def index
     @shoes = @store.shoes
@@ -39,5 +40,12 @@ class ShoesController < ApplicationController
       flash[:alert] = 'Inventory item not found'
       redirect_to store_shoes_path(@store)
     end
+  end
+
+  def set_breadcrumbs
+    @breadcrumbs = [
+      { name: 'Stores', url: root_path },
+      { name: 'Shoes', url: store_shoe_path(@store) },
+    ]
   end
 end
