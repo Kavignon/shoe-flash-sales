@@ -32,11 +32,7 @@ jobs:
       # Generate binstubs for RuboCop, Brakeman, and bundler-audit
       - name: Generate binstubs
         run: bundle binstubs bundler-audit brakeman rubocop
-
-      # Run RuboCop
-      # - name: Run RuboCop
-      #   run: bin/rubocop --parallel
-
+        
       # Run security audits
       - name: Security audit dependencies
         run: bin/bundler-audit --update
@@ -53,7 +49,7 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -t kavignonkaizoku007/rails-app-template:latest .
+        run: docker build -t kavignonkaizoku007/shoe-flash-sale:latest .
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -64,8 +60,9 @@ jobs:
 
       # Push Docker image to Docker Hub
       - name: Push Docker image
-        run: docker push kavignonkaizoku007/rails-app-template:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/shoe-flash-sale:latest
 
+      # Set up SSH
       - name: Set up SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -73,13 +70,22 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan 134.122.40.120 >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to Server
+      # Deploy to DigitalOcean Droplet
+      - name: Deploy to DigitalOcean Droplet
         run: |
-          ssh -i ~/.ssh/deploy_key user@134.122.40.120 << 'EOF'
-            docker pull ***/rails-app-template:latest
-            docker stop $(docker ps -q --filter "name=rails-app-template") || true
-            docker rm $(docker ps -a -q --filter "name=rails-app-template") || true
-            docker run -d -p 3000:3000 --name rails-app-template ***/rails-app-template:latest
+          ssh -i ~/.ssh/deploy_key root@${{ secrets.DROPLET_IP }} << 'EOF'
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/shoe-flash-sale:latest
+            docker stop shoe-flash-sale || true
+            docker rm shoe-flash-sale || true
+            docker run -d --name shoe-flash-sale -p 3000:3000 -e SECRET_KEY_BASE=${{ secrets.RAILS_SECRET }} ${{ secrets.DOCKER_HUB_USERNAME }}/shoe-flash-sale:latest
+          EOF
+
+      # Confirm deployment
+      - name: Confirm deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key root@${{ secrets.DROPLET_IP }} << 'EOF'
+            docker ps
+            curl -f http://localhost:3000 || exit 1
           EOF
