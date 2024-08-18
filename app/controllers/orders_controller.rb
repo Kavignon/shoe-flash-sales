@@ -11,9 +11,7 @@ class OrdersController < ApplicationController
   STORE_NOT_FOUND_ALERT_MESSAGE = 'Store not found'
   SHOE_NOT_FOUND_ALERT_MESSAGE = 'Shoe not found'
   INVENTORY_ITEM_NOT_FOUND_ALERT_MESSAGE = 'Inventory item not found'
-
   INVALID_QUANTITY_ERROR_MESSAGE = 'When ordering a shoe, the quantity has to be over 0.'
-
   SUCCESSFUL_ORDER_PLACED_ALERT_MESSAGE = 'Order placed successfully'
 
   def create
@@ -33,7 +31,6 @@ class OrdersController < ApplicationController
   def handle_error_in_order(alert_message, error_message)
     Rails.logger.error(error_message)
     flash[:alert] = alert_message
-
     redirect_to store_path(@store)
   end
 
@@ -41,16 +38,16 @@ class OrdersController < ApplicationController
     success_order_msg = successful_order_notification(quantity)
     ActionCable.server.broadcast('purchase_alerts_channel', { message: success_order_msg })
 
-    Rails.logger.info success_order_msg
+    Rails.logger.info(success_order_msg)
     flash[:notice] = SUCCESSFUL_ORDER_PLACED_ALERT_MESSAGE
     redirect_to store_path(@store)
   end
 
   def successful_order_notification(quantity)
-    shoe_pair_str = quantity > 1 ? 'pair'.pluralize : 'pair'
+    shoe_pair_str = quantity > 1 ? 'pairs' : 'pair'
     bought_shoe_str = "#{@shoe.brand_name}, #{@shoe.style} in #{@shoe.color} in size #{@shoe.size}"
     invoice_total = (quantity * @shoe.price).to_f.round(2)
-    "#{quantity} #{shoe_pair_str} of #{bought_shoe_str} was purchased for a total of $#{invoice_total} at #{@store.name}"
+    "#{quantity} #{shoe_pair_str} of #{bought_shoe_str} were purchased for a total of $#{invoice_total} at #{@store.name}"
   end
 
   def insufficient_stock_message(quantity)
@@ -88,5 +85,12 @@ class OrdersController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = INVENTORY_ITEM_NOT_FOUND_ALERT_MESSAGE
     redirect_to store_path(@store)
+  end
+
+  def set_breadcrumbs
+    @breadcrumbs = [
+      { name: 'Stores', url: root_path },
+      { name: 'Shoes', url: store_shoe_path(@store) },
+    ]
   end
 end
