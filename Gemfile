@@ -6,6 +6,8 @@ ruby '3.3.4'
 
 gem 'rails', '~> 7.2'
 
+gem 'redis', '~> 4.0'
+
 gem 'bulma-rails'
 
 gem 'sassc-rails'
