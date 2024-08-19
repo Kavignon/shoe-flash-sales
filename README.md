@@ -11,8 +11,6 @@ Welcome to the Rails App Template! This project is a starting point for Rails de
 - **Docker Support**: Includes a Dockerfile to containerize the application, with TLS certificates and database migration handling.
 - **ActionCable**: Real-time features with WebSockets support.
 - **Minitest**: A testing framework for writing tests.
-- **FriendlyId**: Enhances the default Rails ID handling with user-friendly URLs.
-- **Faker**: Generates fake data for development and testing.
 - **Rubocop**: Provides code linting and formatting with support for performance and Rails-specific rules.
 
 ## Getting Started
@@ -38,10 +36,24 @@ Welcome to the Rails App Template! This project is a starting point for Rails de
     bundle install
     ```
 
-3. **Run the Rails server:**
+3. **Setting up the database:**
+
+   ```bash
+    rails db:create
+    ```
+
+   ```bash
+    rails db:migrate
+    ```
+
+   ```bash
+    rails db:seed
+    ```
+
+4. **Run the Rails server:**
 
     ```bash
-    rails server
+    rails server # or RAILS_ENV=production rails server if you prefer running in production mode
     ```
 
    By default, the server runs with HTTPS enabled. You can access it at `https://localhost:3000`.
@@ -53,7 +65,7 @@ To run the application inside a Docker container:
 1. **Build the Docker image:**
 
     ```bash
-    docker build -t rails-app-template .
+    docker build -t shoe-flash-sales . # append --no-cache to force Docker to do clean builds.
     ```
 
 2. **Define SECRET_KEY_BASE:**
@@ -77,7 +89,7 @@ To run the application inside a Docker container:
 4. **Run the container:**
 
     ```bash
-    docker run -p 3000:3000 --env SECRET_KEY_BASE=mysecretkey rails-app-template
+    docker run -p 3000:3000 --env SECRET_KEY_BASE=mysecretkey shoe-flash-sales
     ```
 
 ### Testing
