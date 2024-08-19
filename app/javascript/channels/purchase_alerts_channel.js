@@ -1,13 +1,6 @@
 import consumer from "channels/consumer"
 
 document.addEventListener('DOMContentLoaded', () => {
-  function showToast(message) {
-    if (typeof toastr !== 'undefined') {
-      toastr.info(message, 'Notification', { closeButton: true, progressBar: true });
-    } else {
-      console.error("Toastr is not loaded.");
-    }
-  }
 
   consumer.subscriptions.create("PurchaseAlertsChannel", {
     connected() {
@@ -20,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     received(data) {
       console.log("Received data", data);
-      showToast(data.message);
+      document.getElementById('success-audio').play();
     }
   });
 });

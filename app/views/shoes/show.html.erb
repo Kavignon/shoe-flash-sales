@@ -7,12 +7,22 @@
       <p><strong>Price:</strong> $<%= @shoe.price %></p>
       <p><strong>Available Quantity:</strong> <%= @inventory_item.quantity %></p>
 
-      <%= form_with url: store_orders_path, method: :post, local: true do |f| %>
+      <%= form_with url: store_orders_path, method: :post, html: { id: 'order-form' }, local: true do |f| %>
         <%= hidden_field_tag :store_id, @store.id %>
         <%= hidden_field_tag :shoe_id, @shoe.id %>
         <%= hidden_field_tag :quantity, 1 %>
         <%= submit_tag 'Order', class: 'button is-primary' %>
       <% end %>
+
+      <audio id="success-audio" src="<%= asset_path('cash-register.mp3') %>" preload="auto"></audio>
+
     </div>
   </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const successAudio = document.getElementById('success-audio');
+        console.log(successAudio); // should no longer be undefined
+    });
+</script>
