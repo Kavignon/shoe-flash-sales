@@ -1,8 +1,7 @@
-# Rails Template Project
+# Shoes Flash Sales
 
 ## Overview
-
-Welcome to the Rails App Template! This project is a starting point for Rails development, providing a basic setup with essential configurations and gems. It aims to help developers quickly get up and running with Rails and serve as a foundation for future enhancements and best practices.
+This is a sample sandbox of an e-commerce platform allowing users to come and buy shoes.
 
 ## Features
 
@@ -26,8 +25,8 @@ Welcome to the Rails App Template! This project is a starting point for Rails de
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kavignon/rails-app-template.git
-    cd rails-app-template
+    git clone https://github.com/kavignon/shoe-flash-sales
+    cd shoe-flash-sales
     ```
 
 2. **Install dependencies:**
